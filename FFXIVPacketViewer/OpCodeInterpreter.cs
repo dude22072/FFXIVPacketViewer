@@ -7,7 +7,7 @@ namespace FFXIVPacketViewer
 {
     class OpCodeInterpreter //TODO - Add size checking
     {
-        UInt16[] knownClientOpCodes = { 0x0001, 0x00CA, 0x00CD, 0,012D };
+        UInt16[] knownClientOpCodes = { 0x0001, 0x00CA, 0x00CD, 0x012D };
         UInt16[] knownServerOpCodes = { 0x0001, 0x00CA, 0x00CB, 0x00CF, 0x0131, 0x0134, 0x0137, 0x0139, 0x013D, 0x0177, 0x018B, 0x018D };
         OpCodeInterpreterClient interpClient = new OpCodeInterpreterClient();
         OpCodeInterpreterServer interpServer = new OpCodeInterpreterServer();
