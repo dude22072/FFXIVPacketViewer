@@ -169,9 +169,6 @@
 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00</value>
   </data>
-  <metadata name="lblReadable.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
   <metadata name="btnNextPacket.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -187,4 +184,41 @@
   <metadata name="lblHexSide.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <data name="lblHexSide.Text" xml:space="preserve">
+    <value>000x
+001x
+002x
+003x
+004x
+005x
+006x
+007x
+008x
+009x
+00Ax
+00Bx
+00Cx
+00Dx
+00Ex
+00Fx
+010x
+011x
+012x
+013x
+014x
+015x
+016x
+017x
+018x
+019x
+01Ax
+01Bx
+01Cx
+01Dx
+01Ex
+01Fx
+020x
+021x
+022x</value>
+  </data>
 </root>

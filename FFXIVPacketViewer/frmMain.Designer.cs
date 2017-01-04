@@ -34,12 +34,12 @@
             this.btnLoadText = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.lblHexOut = new System.Windows.Forms.Label();
-            this.lblReadable = new System.Windows.Forms.Label();
             this.btnNextPacket = new System.Windows.Forms.Button();
             this.btnLastPacket = new System.Windows.Forms.Button();
             this.lblCurentPacket = new System.Windows.Forms.Label();
             this.lblHexTop = new System.Windows.Forms.Label();
             this.lblHexSide = new System.Windows.Forms.Label();
+            this.txtReadable = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // txtInput
@@ -87,17 +87,6 @@
             this.lblHexOut.Size = new System.Drawing.Size(425, 486);
             this.lblHexOut.TabIndex = 3;
             this.lblHexOut.Text = resources.GetString("lblHexOut.Text");
-            // 
-            // lblReadable
-            // 
-            this.lblReadable.BackColor = System.Drawing.Color.White;
-            this.lblReadable.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblReadable.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblReadable.Location = new System.Drawing.Point(476, 220);
-            this.lblReadable.Name = "lblReadable";
-            this.lblReadable.Size = new System.Drawing.Size(425, 486);
-            this.lblReadable.TabIndex = 4;
-            this.lblReadable.Text = "label1";
             // 
             // btnNextPacket
             // 
@@ -147,30 +136,38 @@
             this.lblHexSide.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblHexSide.Location = new System.Drawing.Point(6, 221);
             this.lblHexSide.Name = "lblHexSide";
-            this.lblHexSide.Size = new System.Drawing.Size(35, 448);
+            this.lblHexSide.Size = new System.Drawing.Size(35, 490);
             this.lblHexSide.TabIndex = 41;
-            this.lblHexSide.Text = "000x\r\n001x\r\n002x\r\n003x\r\n004x\r\n005x\r\n006x\r\n007x\r\n008x\r\n009x\r\n00Ax\r\n00Bx\r\n00Cx\r\n00D" +
-    "x\r\n00Ex\r\n00Fx\r\n010x\r\n011x\r\n012x\r\n013x\r\n014x\r\n015x\r\n016x\r\n017x\r\n018x\r\n019x\r\n01Ax\r" +
-    "\n01Bx\r\n01Cx\r\n01Dx\r\n01Ex\r\n01Fx";
+            this.lblHexSide.Text = resources.GetString("lblHexSide.Text");
+            // 
+            // txtReadable
+            // 
+            this.txtReadable.Location = new System.Drawing.Point(474, 220);
+            this.txtReadable.Multiline = true;
+            this.txtReadable.Name = "txtReadable";
+            this.txtReadable.ReadOnly = true;
+            this.txtReadable.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtReadable.Size = new System.Drawing.Size(426, 486);
+            this.txtReadable.TabIndex = 42;
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(950, 751);
+            this.Controls.Add(this.txtReadable);
             this.Controls.Add(this.lblHexOut);
             this.Controls.Add(this.lblHexSide);
             this.Controls.Add(this.lblHexTop);
             this.Controls.Add(this.lblCurentPacket);
             this.Controls.Add(this.btnLastPacket);
             this.Controls.Add(this.btnNextPacket);
-            this.Controls.Add(this.lblReadable);
             this.Controls.Add(this.btnLoadText);
             this.Controls.Add(this.lblInput);
             this.Controls.Add(this.txtInput);
             this.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "frmMain";
-            this.Text = "Dude22072\'s FFXIV Classic Packet Interpreter v0.1";
+            this.Text = "Dude22072\'s FFXIV Classic Packet Interpreter v0.2";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -184,12 +181,12 @@
         private System.Windows.Forms.Button btnLoadText;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Label lblHexOut;
-        private System.Windows.Forms.Label lblReadable;
         private System.Windows.Forms.Button btnNextPacket;
         private System.Windows.Forms.Button btnLastPacket;
         private System.Windows.Forms.Label lblCurentPacket;
         private System.Windows.Forms.Label lblHexTop;
         private System.Windows.Forms.Label lblHexSide;
+        private System.Windows.Forms.TextBox txtReadable;
     }
 }
 

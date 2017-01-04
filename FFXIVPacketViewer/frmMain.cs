@@ -19,6 +19,7 @@ namespace FFXIVPacketViewer
         byte[][] packets = new byte[1000][];
         int currentPacket = 0;
         Unpacker _unpacker = new SimpleUnpacker();
+        OpCodeInterpreter opinterp = new OpCodeInterpreter();
         public frmMain()
         {
             InitializeComponent();
@@ -61,9 +62,7 @@ namespace FFXIVPacketViewer
             /*turn the hexstring into a byte array*/
             byte[] hexArray = FromHex(replaced);
             /*Gets the size from the basepacket header*/
-            string size = "";
-            size += BitConverter.ToString(hexArray, 5, 1);
-            size += BitConverter.ToString(hexArray, 4, 1);
+            string size = endianInterpreter(hexArray, 2, 5);
             Decimal result = long.Parse(size, System.Globalization.NumberStyles.HexNumber);
             Boolean dataRemains = true;
             int Iteration = 0;
@@ -90,24 +89,12 @@ namespace FFXIVPacketViewer
                     dataRemains = false;
                     break;
                 }
-                size = "";
-                size += BitConverter.ToString(shifted, 5, 1);
-                size += BitConverter.ToString(shifted, 4, 1);
+                size = endianInterpreter(shifted, 2, 5); ;
 
             }
 #if DEBUG
             Debug.Print("Breakpoint");
 #endif
-        }
-        public static byte[] FromHex(string hex)
-        {
-            hex = hex.Replace("-", "");
-            byte[] raw = new byte[hex.Length / 2];
-            for (int i = 0; i < raw.Length; i++)
-            {
-                raw[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
-            }
-            return raw;
         }
         private void processPacket(int packetToProcess)
         {
@@ -128,23 +115,11 @@ namespace FFXIVPacketViewer
                     lblHexOut.Text += "\r\n";
                 }
             }
-            String size = "";
-            size += BitConverter.ToString(data, 5, 1);
-            size += BitConverter.ToString(data, 4, 1);
-            String subpackets = "";
-            subpackets += BitConverter.ToString(data, 7, 1);
-            subpackets += BitConverter.ToString(data, 6, 1);
+            string size = endianInterpreter(data, 2, 5);
+            string subpackets = endianInterpreter(data, 2, 7); ;
             Decimal sizeresult = long.Parse(size, System.Globalization.NumberStyles.HexNumber);
             Decimal subresult = long.Parse(subpackets, System.Globalization.NumberStyles.HexNumber);
-            String timestamp = "";
-            timestamp += BitConverter.ToString(data, 15, 1);
-            timestamp += BitConverter.ToString(data, 14, 1);
-            timestamp += BitConverter.ToString(data, 13, 1);
-            timestamp += BitConverter.ToString(data, 12, 1);
-            timestamp += BitConverter.ToString(data, 11, 1);
-            timestamp += BitConverter.ToString(data, 10, 1);
-            timestamp += BitConverter.ToString(data, 9, 1);
-            timestamp += BitConverter.ToString(data, 8, 1);
+            String timestamp = endianInterpreter(data, 8, 15);
             byte[] remainingData = new byte[data.Length - 16];
             Buffer.BlockCopy(data, 16, remainingData, 0, data.Length - 16);
             displayPacket((data[1] == 0x01 ? true : false), Convert.ToInt16(sizeresult), Convert.ToInt16(subresult), timestamp, remainingData);
@@ -157,11 +132,9 @@ namespace FFXIVPacketViewer
             display += "Size: " + orignialSize + " (0x" + orignialSize.ToString("X" + 4) + ")\r\n" + "SubPackets: " + subPackets + "\r\n";
             Decimal resulttime = long.Parse(timestamp, System.Globalization.NumberStyles.HexNumber);
             display += "Timestamp: " + UnixTimeStampToDateTimeMiliseconds(Convert.ToDouble(resulttime)) + "\r\n\r\n";
-            
+
             //Seperating SubPackets Begin
-            string size = "";
-            size += BitConverter.ToString(remainingdata, 1, 1);
-            size += BitConverter.ToString(remainingdata, 0, 1);
+            string size = endianInterpreter(remainingdata, 2, 1);
             Decimal result = long.Parse(size, System.Globalization.NumberStyles.HexNumber);
             Boolean dataRemains = true;
             int Iteration = 0;
@@ -189,9 +162,7 @@ namespace FFXIVPacketViewer
                     dataRemains = false;
                     break;
                 }
-                size = "";
-                size += BitConverter.ToString(shifted, 1, 1);
-                size += BitConverter.ToString(shifted, 0, 1);
+                size = endianInterpreter(shifted, 2, 1);
 
             }
             //Seperating SubPackets End
@@ -199,35 +170,19 @@ namespace FFXIVPacketViewer
             for(int I = 0; I < subPackets; I++)
             {
                 byte[] workingData = subPacketsData[I];
-                size = "";
-                size += BitConverter.ToString(workingData, 1, 1);
-                size += BitConverter.ToString(workingData, 0, 1);
-                string sourceID = "";
-                sourceID += BitConverter.ToString(workingData, 7, 1);
-                sourceID += BitConverter.ToString(workingData, 6, 1);
-                sourceID += BitConverter.ToString(workingData, 5, 1);
-                sourceID += BitConverter.ToString(workingData, 4, 1);
-                string targetID = "";
-                targetID += BitConverter.ToString(workingData, 11, 1);
-                targetID += BitConverter.ToString(workingData, 10, 1);
-                targetID += BitConverter.ToString(workingData, 9, 1);
-                targetID += BitConverter.ToString(workingData, 8, 1);
-                string opcode = "";
-                opcode += BitConverter.ToString(workingData, 19, 1);
-                opcode += BitConverter.ToString(workingData, 18, 1);
-                string subtimestamp = "";
-                subtimestamp += BitConverter.ToString(workingData, 27, 1);
-                subtimestamp += BitConverter.ToString(workingData, 26, 1);
-                subtimestamp += BitConverter.ToString(workingData, 25, 1);
-                subtimestamp += BitConverter.ToString(workingData, 24, 1);
+                size = endianInterpreter(workingData, 2, 1);
+                string sourceID = endianInterpreter(workingData, 4, 7);
+                string targetID = endianInterpreter(workingData, 4, 11);
+                string opcode = endianInterpreter(workingData, 2, 19);
+                string subtimestamp = endianInterpreter(workingData, 4, 27);
                 byte[] finalData = new byte[workingData.Length - 31];
                 Buffer.BlockCopy(workingData, 32, finalData, 0, workingData.Length - 32);
-                display += displaySubPacket(I+1, Convert.ToInt16(long.Parse(size, System.Globalization.NumberStyles.HexNumber)), Convert.ToInt32(long.Parse(sourceID, System.Globalization.NumberStyles.HexNumber)), Convert.ToInt32(long.Parse(targetID, System.Globalization.NumberStyles.HexNumber)), Convert.ToInt16(long.Parse(opcode, System.Globalization.NumberStyles.HexNumber)), Convert.ToInt32(long.Parse(subtimestamp, System.Globalization.NumberStyles.HexNumber)), finalData);
+                display += displaySubPacket(I+1, wasCompressed, HexToUInt16(size), HexToUInt32(sourceID), HexToUInt32(targetID), HexToUInt16(opcode), HexToUInt32(subtimestamp), finalData);
             }
 
-            lblReadable.Text = display;
+            txtReadable.Text = display;
         }
-        private string displaySubPacket(int I, Int16 subPacketSize, Int32 sourceID, Int32 targetID, Int16 opcode, Int32 Timestamp, byte[] data)
+        private string displaySubPacket(int I, bool isServer, UInt16 subPacketSize, UInt32 sourceID, UInt32 targetID, UInt16 opcode, UInt32 Timestamp, byte[] data)
         {
             string display = "SubPacket " + I + "\r\n";
             display += "Size: " + subPacketSize + " (0x" + subPacketSize.ToString("X" + 4) + ")\r\n";
@@ -244,7 +199,8 @@ namespace FFXIVPacketViewer
                     display += "\r\n";
                 }
             }
-            display += "\r\n\r\n";
+            display += "\r\n";
+            display += "Meaning:\r\n" + opinterp.interpretOpCode(isServer, opcode, data) + "\r\n\r\n";
             return display;
         }
         private void updatePacketNumber()
@@ -263,19 +219,39 @@ namespace FFXIVPacketViewer
             if (currentPacket < 0) { currentPacket = 0; }
             processPacket(currentPacket);
         }
+
+        #region common
+        //Pulling functions from Common
         public static DateTime UnixTimeStampToDateTimeMiliseconds(double unixTimeStamp)
         {
-            // Unix timestamp is Miliseconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddMilliseconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
+            return Common.UnixTimeStampToDateTimeMiliseconds(unixTimeStamp);
         }
         public static DateTime UnixTimeStampToDateTimeSeconds(double unixTimeStamp)
         {
-            // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
+            return Common.UnixTimeStampToDateTimeSeconds(unixTimeStamp);
         }
+        public static byte[] FromHex(string hex)
+        {
+            return Common.FromHex(hex);
+        }
+        public static string endianInterpreter(byte[] input, int size, int firstByte)
+        {
+            return Common.endianInterpreter(input, size, firstByte);
+        }
+        //TODO - 
+        public static UInt16 HexToUInt16(string input)
+        {
+            return Common.HexToUInt16(input);
+        }
+        public static UInt32 HexToUInt32(string input)
+        {
+            return Common.HexToUInt32(input);
+        }
+        public static UInt64 HexToUInt64(string input)
+        {
+            return Common.HexToUInt64(input);
+        }
+        #endregion
+
     }
 }

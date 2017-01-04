@@ -50,12 +50,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="OpCodeInterpreter.cs" />
     <Compile Include="PacketUnpacker\SimpleUnpacker.cs" />
     <Compile Include="PacketUnpacker\Unpacker.cs" />
     <Compile Include="Program.cs" />
