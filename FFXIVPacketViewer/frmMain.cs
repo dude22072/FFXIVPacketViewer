@@ -131,7 +131,7 @@ namespace FFXIVPacketViewer
             byte[] remainingData = new byte[data.Length - 16];
             Buffer.BlockCopy(data, 16, remainingData, 0, data.Length - 16);
             displayPacket((data[1] == 0x01 ? true : false), Convert.ToInt16(sizeresult), Convert.ToInt16(subresult), timestamp, remainingData);
-            updatePacketNumber();
+            updatePacketDisplay();
         }
         private void displayPacket(Boolean wasCompressed, Int16 orignialSize, Int16 subPackets, string timestamp, byte[] remainingdata)
         {
@@ -195,7 +195,25 @@ namespace FFXIVPacketViewer
             string display = "SubPacket " + I + "\r\n";
             display += "Size: " + subPacketSize + " (0x" + subPacketSize.ToString("X" + 4) + ")\r\n";
             display += "SourceID: " + sourceID + " (0x" + sourceID.ToString("X" + 8) + ")\r\n";
+            var sourceActorType = (byte)((sourceID >> 28) & 0xF);
+            var sourceZoneId = (ushort)((sourceID >> 19) & 0x1FF);
+            var sourceActorIndex = (ushort)(sourceID & 0xFFF);
+            display += "     Actor Type:" + (sourceActorType == 0 ? "Player" : (sourceActorType == 4 ? "NPC/Monster" : "Unknown")) + " (0x" + sourceActorType.ToString("X" + 2) + ")\r\n";
+            if (sourceActorType != 0)
+            {
+                display += "     Zone ID:" + zoneIDs[sourceZoneId] + " (0x" + sourceZoneId.ToString("X" + 4) + ")\r\n";
+                display += "     Actor Index:" + sourceActorIndex + " (0x" + sourceActorIndex.ToString("X" + 4) + ")\r\n";
+            }
             display += "TargetID: " + targetID + " (0x" + targetID.ToString("X" + 8) + ")\r\n";
+            var targetActorType = (byte)((targetID >> 28) & 0xF);
+            var targetZoneId = (ushort)((targetID >> 19) & 0x1FF);
+            var targetActorIndex = (ushort)(targetID & 0xFFF);
+            display += "     Actor Type:" + (targetActorType == 0 ? "Player" : (targetActorType == 4 ? "NPC/Monster" : "Unknown")) + " (0x" + targetActorType.ToString("X" + 2) + ")\r\n";
+            if (targetActorType != 0)
+            {
+                display += "     Zone ID:" + zoneIDs[targetZoneId] + " (0x" + targetZoneId.ToString("X" + 4) + ")\r\n";
+                display += "     Actor Index:" + targetActorIndex + " (0x" + targetActorIndex.ToString("X" + 4) + ")\r\n";
+            }
             display += "OpCode: 0x" + opcode.ToString("X" + 4) + "\r\n";
             display += "Timestamp: " + UnixTimeStampToDateTimeSeconds(Timestamp) + "\r\n";
             display += "Data: \r\n";
@@ -211,9 +229,23 @@ namespace FFXIVPacketViewer
             display += "Meaning:\r\n" + opinterp.interpretOpCode(isServer, opcode, data) + "\r\n\r\n";
             return display;
         }
-        private void updatePacketNumber()
+        /// <summary> Updates the packet display using the common variables.</summary>
+        private void updatePacketDisplay()
         {
-            lblCurentPacket.Text = "Current Packet: " + currentPacket.ToString() + "/" + packetsInCapture.ToString();
+            updatePacketDisplay(currentPacket, packetsInCapture);
+        }
+        private void updatePacketDisplay(int current)
+        {
+            updatePacketDisplay(current, packetsInCapture);
+        }
+        /**
+         * <summary>Updates the "Curent packet:" display.</summary>
+         * <param name="current">Number before the slash.</param>
+         * <param name="max">Number after the slash.</param>
+         */ 
+        private void updatePacketDisplay(int current, int max)
+        {
+            lblCurentPacket.Text = "Current Packet: " + current.ToString() + "/" + max.ToString();
         }
         private void btnNextPacket_Click(object sender, EventArgs e)
         {
@@ -228,7 +260,6 @@ namespace FFXIVPacketViewer
             if (currentPacket < 0) { currentPacket = 0; }
             processPacket(currentPacket);
         }
-
         private void btnDataReport_Click(object sender, EventArgs e)
         {
             if (modifiedSinceDataRead)
@@ -268,39 +299,40 @@ namespace FFXIVPacketViewer
 
         #region common
         //Pulling functions from Common
-        public static DateTime UnixTimeStampToDateTimeMiliseconds(double unixTimeStamp)
+        private static DateTime UnixTimeStampToDateTimeMiliseconds(double unixTimeStamp)
         {
             return Common.UnixTimeStampToDateTimeMiliseconds(unixTimeStamp);
         }
-        public static DateTime UnixTimeStampToDateTimeSeconds(double unixTimeStamp)
+        private static DateTime UnixTimeStampToDateTimeSeconds(double unixTimeStamp)
         {
             return Common.UnixTimeStampToDateTimeSeconds(unixTimeStamp);
         }
-        public static byte[] FromHex(string hex)
+        private static byte[] FromHex(string hex)
         {
             return Common.FromHex(hex);
         }
-        public static string endianInterpreter(byte[] input, int size, int firstByte)
+        private static string endianInterpreter(byte[] input, int size, int firstByte)
         {
             return Common.endianInterpreter(input, size, firstByte);
         }
         //TODO - 
-        public static UInt16 HexToUInt16(string input)
+        private static UInt16 HexToUInt16(string input)
         {
             return Common.HexToUInt16(input);
         }
-        public static UInt32 HexToUInt32(string input)
+        private static UInt32 HexToUInt32(string input)
         {
             return Common.HexToUInt32(input);
         }
-        public static UInt64 HexToUInt64(string input)
+        private static UInt64 HexToUInt64(string input)
         {
             return Common.HexToUInt64(input);
         }
-        public static Single HexToFloat(String input)
+        private static Single HexToFloat(String input)
         {
             return Common.HexToFloat(input);
         }
+        private static string[] zoneIDs = Common.zoneIDs;
         #endregion
 
         

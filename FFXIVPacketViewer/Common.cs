@@ -7,6 +7,36 @@ namespace FFXIVPacketViewer
 {
     class Common
     {
+        public static string[] zoneIDs = {
+        /*0->*/"--", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        /*10->*/"", "", "", "", "", "", "", "", "", "",
+        /*20->*/"", "", "", "", "", "", "", "", "", "",
+        /*30->*/"", "", "", "", "", "", "", "", "", "",
+        /*40->*/"", "", "", "", "", "", "", "", "", "",
+        /*50->*/"", "", "", "", "", "", "", "", "", "",
+        /*60->*/"", "", "", "", "", "", "", "", "", "",
+        /*70->*/"", "", "", "", "", "", "", "", "", "",
+        /*80->*/"", "", "", "", "", "", "", "", "", "",
+        /*90->*/"", "", "", "", "", "", "", "", "", "",
+        /*100->*/"", "", "", "", "", "", "", "", "", "",
+        /*110->*/"", "", "", "", "", "", "", "", "", "",
+        /*120->*/"120", "121", "122", "123", "124", "125", "126", "127", "Lower La Noscea", "Western La Noscea",
+        /*130->*/"Eastern La Noscea", "Mistbeard Cove", "Cassiopeia Hollow", "Limsa Lominsa", "Market Wards", "Upper La Noscea", "136", "U'Ghamaro Mines", "La Noscea", "The Cieldalaes",
+        /*140->*/"Sailors Ward", "Lower La Noscea", "141", "Coerthas Central Highlands", "Coerthas Eastern Highlands", "Coerthas Eastern Lowlands", "Coerthas", "	Coerthas Central Lowlands", "Coerthas Western Highlands", "149",
+        /*150->*/"Central Shroud", "East Shroud", "North Shroud", "West Shroud", "South Shroud", "Gridania", "The Black Shroud", "The Mun-Tuy Cellars", "The Tam-Tara Deepcroft", "The Thousand Maws of Toto-Rak",
+        /*160->*/"Market Wards", "Peasants Ward", "Central Shroud", "163", "Central Shroud", "Central Shroud", "Central Shroud", "Central Shroud", "Central Shroud", "169",
+        /*170->*/"Central Thanalan", "Eastern Thanalan", "Western Thanalan", "Northern Thanalan", "Southern Thanalan", "Ul'dah", "Nanawa Mines", "--", "Copperbell Mines", "Thanalan",
+        /*180->*/"Market Wards", "Merchants Ward", "Central Thanalan", "183", "Ul'dah", "Ul'dah", "Ul'dah", "Ul'dah", "Ul'dah", "189",
+        /*190->*/"Mor Dhona", "191", "Rhotano Sea", "Rhotano Sea", "Rhotano Sea", "Rhotano Sea", "Rhotano Sea", "197", "Rhotano Sea", "199",
+        /*200->*/"Strait of Merlthor", "--", "202", "203", "Western La Noscea", "Eastern La Noscea", "Gridania", "North Shroud", "South Shroud", "Ul'dah",
+        /*210->*/"Eastern Thanalan", "Western Thanalan", "212", "213", "214", "215", "216", "217", "218", "219",
+        /*220->*/"220", "221", "222", "223", "224", "225", "226", "227", "228", "229",
+        /*230->*/"Limsa Lominsa", "Dzemael Darkhold", "Maelstrom Command", "Hall of Flames", "Adders' Nest", "Shposhae", "Locke's Lie", "Turtleback Island", "Thornmarch", "The Howling Eye",
+        /*240->*/"The Bowl of Embers", "241", "242", "243", "Inn Room", "The Aurum Vale", "Cutter's Cry", "North Shroud", "Western La Noscea", "Eastern Thanalan",
+        /*250->*/"The Howling Eye", "Transmission Tower", "The Aurum Vale", "The Aurum Vale", "Cutter's Cry", "Cutter's Cry", "The Howling Eye", "Rivenroad", "North Shroud", "North Shroud",
+        /*260->*/"Western La Noscea", "Western La Noscea", "Eastern Thanalan", "Eastern Thanalan", "Transmission Tower", "The Bowl of Embers", "Mor Dhona", "Rivenroad", "Rivenroad", "Locke's Lie",
+        /*270->*/"Turtleback Island", "271", "272", "273", "274", "275", "276", "277", "278", "279"
+        };
         /**
          * <summary>Turns a unix timestamp (in miliseconds since epoch) into a localized DateTime object.</summary>
          * <param name="unixTimeStamp">Miliseconds since Unix Epoch</param>

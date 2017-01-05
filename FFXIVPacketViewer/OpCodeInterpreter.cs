@@ -25,43 +25,41 @@ namespace FFXIVPacketViewer
 
         #region common
         //Pulling functions from Common
-        public static DateTime UnixTimeStampToDateTimeMiliseconds(double unixTimeStamp)
+        private static DateTime UnixTimeStampToDateTimeMiliseconds(double unixTimeStamp)
         {
             return Common.UnixTimeStampToDateTimeMiliseconds(unixTimeStamp);
         }
-        public static DateTime UnixTimeStampToDateTimeSeconds(double unixTimeStamp)
+        private static DateTime UnixTimeStampToDateTimeSeconds(double unixTimeStamp)
         {
             return Common.UnixTimeStampToDateTimeSeconds(unixTimeStamp);
         }
-        public static byte[] FromHex(string hex)
+        private static byte[] FromHex(string hex)
         {
             return Common.FromHex(hex);
         }
-        public static string endianInterpreter(byte[] input, int size, int firstByte)
+        private static string endianInterpreter(byte[] input, int size, int firstByte)
         {
             return Common.endianInterpreter(input, size, firstByte);
         }
-        public static UInt16 HexToUInt16(string input)
+        private static UInt16 HexToUInt16(string input)
         {
             return Common.HexToUInt16(input);
         }
-        public static UInt32 HexToUInt32(string input)
+        private static UInt32 HexToUInt32(string input)
         {
             return Common.HexToUInt32(input);
         }
-        public static UInt64 HexToUInt64(string input)
+        private static UInt64 HexToUInt64(string input)
         {
             return Common.HexToUInt64(input);
         }
-        public static Single HexToFloat(String input)
+        private static Single HexToFloat(String input)
         {
             return Common.HexToFloat(input);
         }
+        private static string[] zoneIDs = Common.zoneIDs;
         #endregion
 
-        /**
-         * <summary>Interptets Client->Server Opcodes.</summary>
-         */ 
         private class OpCodeInterpreterClient
         {
             /**

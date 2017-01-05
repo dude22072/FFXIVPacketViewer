@@ -203,7 +203,7 @@
             this.Controls.Add(this.txtInput);
             this.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "frmMain";
-            this.Text = "Dude22072\'s FFXIV Classic Packet Interpreter v0.2.5";
+            this.Text = "Dude22072\'s FFXIV Classic Packet Interpreter v0.2.6";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
