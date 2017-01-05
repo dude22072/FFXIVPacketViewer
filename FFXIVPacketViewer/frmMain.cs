@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,6 +19,10 @@ namespace FFXIVPacketViewer
     {
         byte[][] packets = new byte[1000][];
         int currentPacket = 0;
+        int packetsInCapture = 0;
+        UInt64[] opcodesocurence = new UInt64[0xffff];
+        Boolean modifiedSinceDataRead;
+        String dataReport = "";
         Unpacker _unpacker = new SimpleUnpacker();
         OpCodeInterpreter opinterp = new OpCodeInterpreter();
         public frmMain()
@@ -43,6 +48,7 @@ namespace FFXIVPacketViewer
                     string tmp = File.ReadAllText(openFileDialog1.FileName);
                     string tmp2 = System.Text.RegularExpressions.Regex.Replace(tmp, @"\t|\n|\r", " ");
                     txtInput.Text = tmp2;
+                    btnDataReport.Enabled = true;
                 }
                 catch (Exception ex)
                 {
@@ -54,6 +60,7 @@ namespace FFXIVPacketViewer
         {
             processBytes(txtInput.Text);
             processPacket(currentPacket);
+            modifiedSinceDataRead = true;
         }
         private void processBytes(string input)
         {
@@ -75,16 +82,16 @@ namespace FFXIVPacketViewer
                 result = long.Parse(size, System.Globalization.NumberStyles.HexNumber);
                 int res = Convert.ToInt16(result);
                 packets[Iteration] = new byte[res];
-                for(int I = 0; I<result; I++)
+                for (int I = 0; I < result; I++)
                 {
                     packets[Iteration][I] = shifted[I];
                 }
                 //new itteration
                 Iteration++;
-                byte[] shifted2 = new byte[shifted.Length-res];
+                byte[] shifted2 = new byte[shifted.Length - res];
                 Buffer.BlockCopy(shifted, res, shifted2, 0, shifted.Length - res);
                 shifted = shifted2;
-                if (shifted.Length<1)
+                if (shifted.Length < 1)
                 {
                     dataRemains = false;
                     break;
@@ -92,6 +99,7 @@ namespace FFXIVPacketViewer
                 size = endianInterpreter(shifted, 2, 5); ;
 
             }
+            packetsInCapture = Iteration - 1; //Because it gets added to before the empty data check happens
 #if DEBUG
             Debug.Print("Breakpoint");
 #endif
@@ -167,7 +175,7 @@ namespace FFXIVPacketViewer
             }
             //Seperating SubPackets End
 
-            for(int I = 0; I < subPackets; I++)
+            for (int I = 0; I < subPackets; I++)
             {
                 byte[] workingData = subPacketsData[I];
                 size = endianInterpreter(workingData, 2, 1);
@@ -177,7 +185,7 @@ namespace FFXIVPacketViewer
                 string subtimestamp = endianInterpreter(workingData, 4, 27);
                 byte[] finalData = new byte[workingData.Length - 31];
                 Buffer.BlockCopy(workingData, 32, finalData, 0, workingData.Length - 32);
-                display += displaySubPacket(I+1, wasCompressed, HexToUInt16(size), HexToUInt32(sourceID), HexToUInt32(targetID), HexToUInt16(opcode), HexToUInt32(subtimestamp), finalData);
+                display += displaySubPacket(I + 1, wasCompressed, HexToUInt16(size), HexToUInt32(sourceID), HexToUInt32(targetID), HexToUInt16(opcode), HexToUInt32(subtimestamp), finalData);
             }
 
             txtReadable.Text = display;
@@ -191,10 +199,10 @@ namespace FFXIVPacketViewer
             display += "OpCode: 0x" + opcode.ToString("X" + 4) + "\r\n";
             display += "Timestamp: " + UnixTimeStampToDateTimeSeconds(Timestamp) + "\r\n";
             display += "Data: \r\n";
-            for(int J = 0; J < data.Length; J++)
+            for (int J = 0; J < data.Length; J++)
             {
                 display += BitConverter.ToString(data, J, 1) + " ";
-                if((J+1)%16==0)
+                if ((J + 1) % 16 == 0)
                 {
                     display += "\r\n";
                 }
@@ -205,12 +213,13 @@ namespace FFXIVPacketViewer
         }
         private void updatePacketNumber()
         {
-            lblCurentPacket.Text = "Current Packet: " + currentPacket.ToString();
+            lblCurentPacket.Text = "Current Packet: " + currentPacket.ToString() + "/" + packetsInCapture.ToString();
         }
         private void btnNextPacket_Click(object sender, EventArgs e)
         {
             currentPacket++;
-            if (currentPacket > 1000) { currentPacket = 1000; }
+            if (currentPacket > 1000) { currentPacket = 1000; } //In case we have more than 1000 packets in a capture, as the packets[][] has a size of 1000.
+            if (currentPacket > packetsInCapture) { currentPacket = packetsInCapture; }
             processPacket(currentPacket);
         }
         private void btnLastPacket_Click(object sender, EventArgs e)
@@ -218,6 +227,43 @@ namespace FFXIVPacketViewer
             currentPacket--;
             if (currentPacket < 0) { currentPacket = 0; }
             processPacket(currentPacket);
+        }
+
+        private void btnDataReport_Click(object sender, EventArgs e)
+        {
+            if (modifiedSinceDataRead)
+            {
+                progressBar1.Visible = true;
+                progressBar1.Maximum = packetsInCapture;
+                int packetWas = currentPacket;
+                for (int packetNumb = 0; packetNumb < packetsInCapture; packetNumb++)
+                {
+                    processPacket(packetNumb);
+                    string[] regexed = Regex.Split(txtReadable.Text.Replace("\r\n", ""), "(?<=OpCode: 0x)");
+                    for (int I = 1; I < regexed.Length; I++)
+                    {
+                        opcodesocurence[HexToUInt32(regexed[I].Substring(0, 4))]++;
+                    }
+                    progressBar1.Value = packetNumb + 1;
+                }
+                currentPacket = packetWas;
+                processPacket(currentPacket);
+
+                progressBar1.Value = 0;
+                progressBar1.Maximum = 0xffff;
+
+                for (int I = 0; I < 0xFFFF; I++)
+                {
+                    if (opcodesocurence[I] > 0)
+                    {
+                        dataReport += ("0x" + I.ToString("X" + 4) + " - " + opcodesocurence[I].ToString()) + "\r\n";
+                    }
+                    progressBar1.Value = I + 1;
+                }
+                progressBar1.Visible = false;
+                modifiedSinceDataRead = false;
+            }
+            MessageBox.Show(dataReport, "Data Report", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         #region common
@@ -251,7 +297,12 @@ namespace FFXIVPacketViewer
         {
             return Common.HexToUInt64(input);
         }
+        public static Single HexToFloat(String input)
+        {
+            return Common.HexToFloat(input);
+        }
         #endregion
 
+        
     }
 }

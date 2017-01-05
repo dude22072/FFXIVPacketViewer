@@ -12,28 +12,16 @@ namespace FFXIVPacketViewer
         OpCodeInterpreterClient interpClient = new OpCodeInterpreterClient();
         OpCodeInterpreterServer interpServer = new OpCodeInterpreterServer();
 
-        private Boolean isValidOpcode(bool isServer, UInt16 opCode)
-        {
-            if(isServer)
-            {
-                return (knownServerOpCodes.Contains(opCode)) ? true: false;
-            }
-            else
-            {
-                return (knownClientOpCodes.Contains(opCode)) ? true : false;
-            }
-        }
-        public string interpretOpCode(bool isServer, UInt16 opCode, byte[] data)
-        {
-            if(isValidOpcode(isServer,opCode))
-            {
-                return isServer ? interpServer.interpretOpCode(opCode, data) : interpClient.interpretOpCode(opCode, data);
-            }
-            else
-            {
-                return "Undocumented or improper OpCode";
-            }
-        }
+        /**
+         * <summary>Checks to see if the OpCode is in the Array of valid OpCodes</summary>
+         * <returns>Boolean</returns> 
+         */
+        private Boolean isValidOpcode(bool isServer, UInt16 opCode) { return isServer ? (knownServerOpCodes.Contains(opCode) ? true : false) : ((knownClientOpCodes.Contains(opCode)) ? true : false); }
+        /**
+         * <summary>Checks validity of the OpCode (through <c>isValidOpcode</c>) and then returns an interpretation</summary>
+         * <returns>Interpretation of OpCode</returns> 
+         */
+        public string interpretOpCode(bool isServer, UInt16 opCode, byte[] data) { return isValidOpcode(isServer, opCode) ? (isServer ? interpServer.interpretOpCode(opCode, data) : interpClient.interpretOpCode(opCode, data)) : ("Undocumented or improper OpCode"); }
 
         #region common
         //Pulling functions from Common
@@ -65,10 +53,26 @@ namespace FFXIVPacketViewer
         {
             return Common.HexToUInt64(input);
         }
+        public static Single HexToFloat(String input)
+        {
+            return Common.HexToFloat(input);
+        }
         #endregion
 
+        /**
+         * <summary>Interptets Client->Server Opcodes.</summary>
+         */ 
         private class OpCodeInterpreterClient
         {
+            /**
+             * <summary>
+             * Interprets the Client->Server OpCodes.
+             * </summary>
+             */
+            public OpCodeInterpreterClient()
+            {
+
+            }
             public string interpretOpCode(UInt16 opCode, byte[] data)
             {
                 string toReturn = "";
@@ -85,7 +89,7 @@ namespace FFXIVPacketViewer
                         string rot = endianInterpreter(data, 4, 23);
                         string moveState = endianInterpreter(data, 2, 25);
                         //Int32 was overflowing?
-                        toReturn = "Position Update\r\nX:" + HexToUInt32(x) + " (0x" + x + ")\r\nY:" + HexToUInt32(y) + " (0x" + y + ")\r\nZ:" + HexToUInt32(z) + " (0x" + z + ")\r\nRotation:" + HexToUInt32(rot) + " (0x" + rot + ")\r\nMove State:";
+                        toReturn = "Position Update\r\nX:" + HexToFloat(x) + " (0x" + x + ")\r\nY:" + HexToFloat(y) + " (0x" + y + ")\r\nZ:" + HexToFloat(z) + " (0x" + z + ")\r\nRotation:" + HexToFloat(rot) + " (0x" + rot + ")\r\nMove State:";
                         switch(HexToUInt16(moveState))
                         {
                             case 0: toReturn += "Standing";break;
@@ -112,6 +116,12 @@ namespace FFXIVPacketViewer
         {
             List<Tuple<Int64, string>> ActorMainState = new List<Tuple<Int64, string>>();
             List<Tuple<Int64, string>> ActorSubState = new List<Tuple<Int64, string>>();
+            /**
+             * <summary>
+             * Interprets the Server->Client OpCodes.
+             * Initilizer puts the needed values into the lists.
+             * </summary>
+             */ 
             public OpCodeInterpreterServer()
             {
                 ActorMainState.Add(new Tuple<Int64, string>(0, "MAIN_STATE_PASSIVE"));
@@ -129,6 +139,12 @@ namespace FFXIVPacketViewer
                 ActorSubState.Add(new Tuple<Int64, string>(0xBF, "SUB_STATE_PLAYER"));
                 ActorSubState.Add(new Tuple<Int64, string>(0x03, "SUB_STATE_MONSTER"));
             }
+            /**
+             * <summary>Gets the <c>String</c> from a <c>Int64</c>/<c>String</c> Tuple.</summary>
+             * <param name="toFind">The Int64 from which to get the string.</param>
+             * <param name="toIterate">The Tuple List to look through.</param>
+             * <returns>String</returns>
+             */ 
             String returnTupleString(Int64 toFind, List<Tuple<Int64, string>> toIterate)
             {
                 foreach(Tuple<Int64, string> tup in toIterate)
@@ -161,7 +177,7 @@ namespace FFXIVPacketViewer
                         string z = endianInterpreter(data, 4, 19);
                         string rot = endianInterpreter(data, 4, 23);
                         string moveState = endianInterpreter(data, 2, 25);
-                        toReturn = "Move Actor to Position\r\nX:" + HexToUInt32(x) + " (0x" + x + ")\r\nY:" + HexToUInt32(y) + " (0x" + y + ")\r\nZ:" + HexToUInt32(z) + " (0x" + z + ")\r\nRotation:" + HexToUInt32(rot) + " (0x" + rot + ")\r\nMove State:";
+                        toReturn = "Move Actor to Position\r\nX:" + HexToFloat(x) + " (0x" + x + ")\r\nY:" + HexToFloat(y) + " (0x" + y + ")\r\nZ:" + HexToFloat(z) + " (0x" + z + ")\r\nRotation:" + HexToFloat(rot) + " (0x" + rot + ")\r\nMove State:";
                         switch (HexToUInt16(moveState))
                         {
                             case 0: toReturn += "Standing"; break;
