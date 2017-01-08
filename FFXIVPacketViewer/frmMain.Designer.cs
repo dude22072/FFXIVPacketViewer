@@ -43,6 +43,8 @@
             this.btnLoadHex = new System.Windows.Forms.Button();
             this.btnDataReport = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.openFileDialogHex = new System.Windows.Forms.OpenFileDialog();
+            this.lblBar = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtInput
@@ -155,13 +157,13 @@
             // 
             // btnLoadHex
             // 
-            this.btnLoadHex.Enabled = false;
             this.btnLoadHex.Location = new System.Drawing.Point(665, 192);
             this.btnLoadHex.Name = "btnLoadHex";
             this.btnLoadHex.Size = new System.Drawing.Size(115, 25);
             this.btnLoadHex.TabIndex = 43;
             this.btnLoadHex.Text = "Load Hex File";
             this.btnLoadHex.UseVisualStyleBackColor = true;
+            this.btnLoadHex.Click += new System.EventHandler(this.btnLoadHex_Click);
             // 
             // btnDataReport
             // 
@@ -183,11 +185,27 @@
             this.progressBar1.TabIndex = 45;
             this.progressBar1.Visible = false;
             // 
+            // openFileDialogHex
+            // 
+            this.openFileDialogHex.FileName = "openFileDialogHex";
+            // 
+            // lblBar
+            // 
+            this.lblBar.AutoSize = true;
+            this.lblBar.BackColor = System.Drawing.SystemColors.Control;
+            this.lblBar.Location = new System.Drawing.Point(53, 199);
+            this.lblBar.Name = "lblBar";
+            this.lblBar.Size = new System.Drawing.Size(77, 14);
+            this.lblBar.TabIndex = 46;
+            this.lblBar.Text = "Loading...";
+            this.lblBar.Visible = false;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(950, 751);
+            this.Controls.Add(this.lblBar);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.btnDataReport);
             this.Controls.Add(this.btnLoadHex);
@@ -203,7 +221,7 @@
             this.Controls.Add(this.txtInput);
             this.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "frmMain";
-            this.Text = "Dude22072\'s FFXIV Classic Packet Interpreter v0.2.6";
+            this.Text = "Dude22072\'s FFXIV Classic Packet Interpreter v0.2.9";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -226,6 +244,8 @@
         private System.Windows.Forms.Button btnLoadHex;
         private System.Windows.Forms.Button btnDataReport;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.OpenFileDialog openFileDialogHex;
+        private System.Windows.Forms.Label lblBar;
     }
 }
 
